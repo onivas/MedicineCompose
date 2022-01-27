@@ -60,6 +60,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'androidx.activity:activity-compose:1.4.0'
 
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+
 
     def retrofit = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofit"
@@ -84,6 +86,10 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt"
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0-rc01")
 
+    def roomVersion = "2.4.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
