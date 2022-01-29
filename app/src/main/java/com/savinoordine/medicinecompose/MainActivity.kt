@@ -13,7 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.savinoordine.medicinecompose.route.MAIN_ROUTE
 import com.savinoordine.medicinecompose.route.mainGraph
 import com.savinoordine.medicinecompose.ui.theme.MedicineComposeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -9,3 +9,11 @@ fun MedicineEntity.toEntity(): Medicine {
         shortDescription = description.orEmpty()
     )
 }
+
+fun Medicine.toEntity(): MedicineEntity {
+    return MedicineEntity(
+        uid = 0,
+        name = name,
+        description = shortDescription,
+    )
+}
