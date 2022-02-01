@@ -1,29 +1,36 @@
-package com.savinoordine.medicinecompose.screen.new
+package com.savinoordine.medicinecompose.screen.create
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.savinoordine.medicinecompose.screen.core.State
 
 @Composable
-fun NewMedicineScreen(
-    viewModel: NewMedicineViewModel = hiltViewModel(),
+fun CreateMedicineScreen(
+    viewModel: CreateMedicineViewModel,
     navController: NavController
 ) {
 
     val uiState = viewModel.uiState
-    var isButtonEnable = false
+    var isButtonEnable = remember { false }
+    var name = remember { "" }
+    var description = remember { "" }
 
     when (uiState.state) {
         State.IDLE -> {
             isButtonEnable = uiState.isSaveButtonEnable
+            name = uiState.medicine.name
+            description = uiState.medicine.shortDescription
         }
         State.SUCCESS -> {
             navController.navigateUp()
@@ -31,6 +38,8 @@ fun NewMedicineScreen(
     }
 
     MedicineForm(isButtonEnable,
+        name,
+        description,
         {
             viewModel.onNameChanged(it)
         }, {
@@ -44,6 +53,8 @@ fun NewMedicineScreen(
 @Composable
 fun MedicineForm(
     isButtonEnable: Boolean,
+    name: String,
+    description: String,
     onNameChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onSaveMedicineClick: () -> Unit
@@ -54,18 +65,17 @@ fun MedicineForm(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            OutlinedTextField(
-                value = "",
-                label = { Text(text = "Name") },
-                onValueChange = { onNameChanged(it) },
-                modifier = Modifier.fillMaxWidth()
+
+            EditTextField(
+                value = name,
+                hint = "Name",
+                onValueChanged = onNameChanged
             )
 
-            OutlinedTextField(
-                value = "",
-                label = { Text(text = "Description") },
-                onValueChange = { onDescriptionChanged(it) },
-                modifier = Modifier.fillMaxWidth()
+            EditTextField(
+                value = description,
+                hint = "Description",
+                onValueChanged = onDescriptionChanged
             )
 
             Button(modifier = Modifier
@@ -79,8 +89,22 @@ fun MedicineForm(
     }
 }
 
+@Composable
+fun EditTextField(
+    value: String,
+    hint: String,
+    onValueChanged: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = value,
+        label = { Text(text = hint) },
+        onValueChange = { onValueChanged(it) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
 @Preview
 @Composable
 fun PreviewNewMedicine() {
-    MedicineForm(true, {}, {}) {}
+    MedicineForm(true, "", "", {}, {}) {}
 }

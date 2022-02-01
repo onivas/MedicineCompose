@@ -1,12 +1,13 @@
 package com.savinoordine.medicinecompose.route
 
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.savinoordine.medicinecompose.screen.list.MedicineList
-import com.savinoordine.medicinecompose.screen.new.NewMedicineScreen
+import com.savinoordine.medicinecompose.screen.create.CreateMedicineScreen
 
 // routes
 const val MAIN_ROUTE = "MAIN_ROUTE"
@@ -17,10 +18,16 @@ const val NEW_MEDICINE_ROUTE = "NEW_MEDICINE_ROUTE"
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation(startDestination = LIST_MEDICINE_ROUTE, route = MAIN_ROUTE) {
         composable(route = LIST_MEDICINE_ROUTE) {
-            MedicineList(navController = navController)
+            MedicineList(
+                navController = navController,
+                viewModel = hiltViewModel()
+            )
         }
         composable(route = NEW_MEDICINE_ROUTE) {
-            NewMedicineScreen(navController = navController)
+            CreateMedicineScreen(
+                navController = navController,
+                viewModel = hiltViewModel()
+            )
         }
     }
 }

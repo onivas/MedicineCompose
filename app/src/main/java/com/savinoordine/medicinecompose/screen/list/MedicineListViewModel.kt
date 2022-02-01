@@ -10,6 +10,7 @@ import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
 import com.savinoordine.medicinecompose.screen.core.ScreenState
 import com.savinoordine.medicinecompose.screen.core.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,21 +22,28 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
     var uiState by mutableStateOf(value = MedicineListState())
         private set
 
-    private fun fetchMedicines() {
-        uiState = uiState.copy(state = State.LOADING)
+    init {
         viewModelScope.launch {
-            val medicines = medicineRepository.fetchMedicines()
-            uiState = uiState.copy(
-                state = State.IDLE,
-                medicines = medicines
-            )
+            medicineRepository.medicine.collect { medicines ->
+                uiState = uiState.copy(
+                    state = State.IDLE,
+                    medicines = medicines
+                )
+            }
         }
+        fetchMedicines()
     }
 
+    fun fetchMedicines() {
+        viewModelScope.launch {
+            uiState = uiState.copy(state = State.LOADING)
+            medicineRepository.fetchMedicines()
+        }
+    }
 }
 
 data class MedicineListState(
     override val state: State = State.IDLE,
-    val medicines: List<Medicine>? = null,
+    val medicines: List<Medicine> = emptyList(),
     val error: String? = null,
 ) : ScreenState

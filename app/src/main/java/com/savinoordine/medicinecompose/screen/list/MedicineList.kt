@@ -11,27 +11,28 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.savinoordine.medicinecompose.screen.core.State
 import com.savinoordine.medicinecompose.domain.model.Medicine
 import com.savinoordine.medicinecompose.route.NEW_MEDICINE_ROUTE
+import com.savinoordine.medicinecompose.screen.core.State
 
 @Composable
 fun MedicineList(
-    viewModel: MedicineListViewModel = hiltViewModel(),
+    viewModel: MedicineListViewModel,
     navController: NavController
 ) {
 
     val uiState = viewModel.uiState
+    var medicines: List<Medicine> = remember { emptyList() }  //TODO fix
 
     when (uiState.state) {
         State.IDLE -> {
-            val medicines = uiState.medicines ?: emptyList()
+            medicines = uiState.medicines
             ShowMedicines(medicines) {
                 navController.navigate(NEW_MEDICINE_ROUTE)
             }
@@ -57,7 +58,10 @@ fun showLoading() {
 }
 
 @Composable
-fun ShowMedicines(medicines: List<Medicine>, addNewMedicineClick: () -> Unit) {
+fun ShowMedicines(
+    medicines: List<Medicine>,
+    addNewMedicineClick: () -> Unit
+) {
 
     val listState = rememberLazyListState()
 
@@ -88,7 +92,7 @@ fun ShowMedicines(medicines: List<Medicine>, addNewMedicineClick: () -> Unit) {
 @Composable
 fun MedicineItem(medicine: Medicine) {
     Text(text = medicine.name)
-    Text(text = medicine.shortDescription.orEmpty())
+    Text(text = medicine.shortDescription)
 }
 
 @Preview

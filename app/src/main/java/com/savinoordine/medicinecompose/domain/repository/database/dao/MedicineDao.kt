@@ -10,7 +10,7 @@ import com.savinoordine.medicinecompose.domain.repository.database.entity.Medici
 interface MedicineDao {
 
     @Query("SELECT * FROM MedicineEntity")
-    suspend fun fetchMedicines(): List<MedicineEntity>  // TODO use livedata
+    suspend fun fetchMedicines(): List<MedicineEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveMedicine(medicineEntity: MedicineEntity)

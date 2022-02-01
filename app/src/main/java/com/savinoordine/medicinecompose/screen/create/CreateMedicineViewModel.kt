@@ -1,4 +1,4 @@
-package com.savinoordine.medicinecompose.screen.new
+package com.savinoordine.medicinecompose.screen.create
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NewMedicineViewModel
+class CreateMedicineViewModel
 @Inject
-constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
+constructor(var medicineRepository: MedicineRepository) : ViewModel() {
 
     var uiState by mutableStateOf(value = NewMedicineState())
         private set
@@ -38,7 +38,10 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
 
     fun onNameChanged(value: String) {
         val medicine = uiState.medicine.copy(name = value)
-        uiState = uiState.copy(medicine = medicine)
+        uiState = uiState.copy(
+            medicine = medicine,
+            isSaveButtonEnable = medicine.isValid
+        )
         canMedicineBeSaved()
     }
 
