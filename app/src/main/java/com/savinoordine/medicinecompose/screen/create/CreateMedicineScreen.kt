@@ -33,7 +33,7 @@ fun CreateMedicineScreen(
             description = uiState.medicine.shortDescription
         }
         State.SUCCESS -> {
-            navController.navigateUp()
+//            navController.popBackStack()
         }
     }
 
