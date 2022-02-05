@@ -1,10 +1,9 @@
 package com.savinoordine.medicinecompose.domain.repository
 
 import com.savinoordine.medicinecompose.domain.model.Medicine
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 
 interface MedicineRepository {
-    val medicine: SharedFlow<List<Medicine>>
-    suspend fun fetchMedicines()
+    fun fetchMedicines(): Flow<List<Medicine>>
     suspend fun saveMedicine(medicine: Medicine)
 }

@@ -5,12 +5,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.savinoordine.medicinecompose.domain.repository.database.entity.MedicineEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MedicineDao {
 
     @Query("SELECT * FROM MedicineEntity")
-    suspend fun fetchMedicines(): List<MedicineEntity>
+    fun fetchMedicines(): Flow<List<MedicineEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveMedicine(medicineEntity: MedicineEntity)

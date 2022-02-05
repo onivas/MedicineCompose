@@ -10,7 +10,9 @@ import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
 import com.savinoordine.medicinecompose.screen.core.ScreenState
 import com.savinoordine.medicinecompose.screen.core.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,27 +21,28 @@ class MedicineListViewModel
 @Inject
 constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
 
-    var uiState by mutableStateOf(value = MedicineListState())
+    var uiState by mutableStateOf(value = MedicineListState(state = State.LOADING))
         private set
 
     init {
-        viewModelScope.launch {
-            medicineRepository.medicine.collect { medicines ->
-                uiState = uiState.copy(
-                    state = State.IDLE,
-                    medicines = medicines
-                )
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            medicineRepository.fetchMedicines()
+                .distinctUntilChanged()
+                .collect { medicines ->
+                    uiState = uiState.copy(
+                        state = State.IDLE,
+                        medicines = if (medicines.isNullOrEmpty()) emptyList() else medicines
+                    )
+                }
         }
-        fetchMedicines()
     }
 
-    fun fetchMedicines() {
-        viewModelScope.launch {
-            uiState = uiState.copy(state = State.LOADING)
-            medicineRepository.fetchMedicines()
-        }
-    }
+//    fun fetchMedicines() {
+//        viewModelScope.launch {
+//            uiState = uiState.copy(state = State.LOADING)
+//            medicineRepository.fetchMedicines()
+//        }
+//    }
 }
 
 data class MedicineListState(
