@@ -16,8 +16,6 @@ local.properties
 
 .idea
 .idea/
-gradlew.bat
-gradle/
 # Built application files
 *.apk
 *.aar
