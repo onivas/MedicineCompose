@@ -8,6 +8,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +34,7 @@ fun CreateMedicineScreen(
             description = uiState.medicine.shortDescription
         }
         State.SUCCESS -> {
-//            navController.popBackStack()
+            LaunchedEffect(Unit) { navController.popBackStack() }
         }
     }
 

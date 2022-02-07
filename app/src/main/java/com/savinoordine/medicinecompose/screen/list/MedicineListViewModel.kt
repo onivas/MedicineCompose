@@ -24,7 +24,7 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
     var uiState by mutableStateOf(value = MedicineListState(state = State.LOADING))
         private set
 
-    init {
+    fun fetchMedicines() {
         viewModelScope.launch(Dispatchers.IO) {
             medicineRepository.fetchMedicines()
                 .distinctUntilChanged()
@@ -36,13 +36,6 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
                 }
         }
     }
-
-//    fun fetchMedicines() {
-//        viewModelScope.launch {
-//            uiState = uiState.copy(state = State.LOADING)
-//            medicineRepository.fetchMedicines()
-//        }
-//    }
 }
 
 data class MedicineListState(
