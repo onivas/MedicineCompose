@@ -20,4 +20,8 @@ constructor(private val medicineDao: MedicineDao) : MedicineRepository {
     override suspend fun saveMedicine(medicine: Medicine) {
         return medicineDao.saveMedicine(medicine.toEntity())
     }
+
+    override suspend fun deleteMedicine(medicine: Medicine) {
+        return medicineDao.deleteMedicine(medicine.toEntity())
+    }
 }

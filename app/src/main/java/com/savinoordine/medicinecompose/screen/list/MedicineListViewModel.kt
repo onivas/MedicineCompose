@@ -36,6 +36,13 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
                 }
         }
     }
+
+    fun deleteMedicine(medicine: Medicine) {
+        uiState = uiState.copy(state = State.LOADING)
+        viewModelScope.launch {
+            medicineRepository.deleteMedicine(medicine)
+        }
+    }
 }
 
 data class MedicineListState(

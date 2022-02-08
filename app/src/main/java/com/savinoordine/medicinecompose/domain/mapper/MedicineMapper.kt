@@ -6,6 +6,7 @@ import com.savinoordine.medicinecompose.domain.repository.database.entity.Medici
 fun List<MedicineEntity>.toEntity(): List<Medicine> =
     map {
         Medicine(
+            id = it.uid,
             name = it.name,
             shortDescription = it.description.orEmpty()
         )
@@ -14,7 +15,7 @@ fun List<MedicineEntity>.toEntity(): List<Medicine> =
 
 fun Medicine.toEntity(): MedicineEntity {
     return MedicineEntity(
-        uid = 0,
+        uid = id,
         name = name,
         description = shortDescription,
     )

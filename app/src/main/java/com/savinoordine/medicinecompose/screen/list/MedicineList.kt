@@ -1,6 +1,8 @@
 package com.savinoordine.medicinecompose.screen.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +21,7 @@ import com.savinoordine.medicinecompose.domain.model.Medicine
 import com.savinoordine.medicinecompose.route.NEW_MEDICINE_ROUTE
 import com.savinoordine.medicinecompose.screen.core.State
 
+@ExperimentalFoundationApi
 @Composable
 fun MedicineList(
     viewModel: MedicineListViewModel,
@@ -32,8 +35,10 @@ fun MedicineList(
     when (uiState.state) {
         State.IDLE -> {
             val medicines = uiState.medicines
-            ShowMedicines(medicines) {
+            ShowMedicines(medicines, {
                 navController.navigate(NEW_MEDICINE_ROUTE)
+            }) { medicine ->
+                viewModel.deleteMedicine(medicine)
             }
         }
         State.LOADING -> {
@@ -56,22 +61,24 @@ fun showLoading() {
 
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun ShowMedicines(
     medicines: List<Medicine>,
-    addNewMedicineClick: () -> Unit
+    AddNewMedicineClick: () -> Unit,
+    OnMedicineDeletedClick: (Medicine) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 content = { Text(text = "+") },
-                onClick = { addNewMedicineClick() })
+                onClick = { AddNewMedicineClick() })
         },
     ) {
         if (medicines.isEmpty()) {
             ShowEmptyListPage()
         } else {
-            ShowMedicinesListPage(medicines)
+            ShowMedicinesListPage(medicines, OnMedicineDeletedClick)
         }
     }
 }
@@ -95,8 +102,9 @@ fun ShowEmptyListPage() {
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
-fun ShowMedicinesListPage(medicines: List<Medicine>) {
+fun ShowMedicinesListPage(medicines: List<Medicine>, OnMedicineDeletedClick: (Medicine) -> Unit) {
     val listState = rememberLazyListState()
     LazyColumn(
         state = listState,
@@ -107,23 +115,27 @@ fun ShowMedicinesListPage(medicines: List<Medicine>) {
         contentPadding = PaddingValues(8.dp)
     ) {
         items(items = medicines) { medicine ->
-            MedicineItem(medicine)
+            MedicineItem(medicine, OnMedicineDeletedClick)
         }
     }
 }
 
+@ExperimentalFoundationApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MedicineItem(medicine: Medicine) {
+fun MedicineItem(medicine: Medicine, OnMedicineDeletedClick: (Medicine) -> Unit) {
     Card(
         modifier = Modifier
             .padding(5.dp)
             .fillMaxWidth()
-            .wrapContentHeight(),
-        elevation = 4.dp,
-        onClick = {
+            .wrapContentHeight()
+            .combinedClickable(
+                onClick = {
 
-        }
+                },
+                onLongClick = { OnMedicineDeletedClick(medicine) }
+            ),
+        elevation = 4.dp,
     ) {
         Column(
             modifier = Modifier
@@ -136,8 +148,9 @@ fun MedicineItem(medicine: Medicine) {
     }
 }
 
+@ExperimentalFoundationApi
 @Preview
 @Composable
 fun PreviewList() {
-    ShowMedicines(medicines = listOf(Medicine("name", "description"))) {}
+    ShowMedicines(medicines = listOf(Medicine(1, "name", "description")), {}) {}
 }

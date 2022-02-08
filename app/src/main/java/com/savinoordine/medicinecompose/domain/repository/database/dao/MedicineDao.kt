@@ -1,9 +1,6 @@
 package com.savinoordine.medicinecompose.domain.repository.database.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.savinoordine.medicinecompose.domain.repository.database.entity.MedicineEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -15,4 +12,7 @@ interface MedicineDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveMedicine(medicineEntity: MedicineEntity)
+
+    @Delete
+    suspend fun deleteMedicine(medicine: MedicineEntity)
 }
