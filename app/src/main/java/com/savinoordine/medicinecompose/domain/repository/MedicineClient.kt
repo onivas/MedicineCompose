@@ -14,7 +14,9 @@ constructor(private val medicineDao: MedicineDao) : MedicineRepository {
 
     override fun fetchMedicines(): Flow<List<Medicine>> {
         return medicineDao.fetchMedicines()
-            .map { it.toEntity() }
+            .map {
+                it.toEntity()
+            }
     }
 
     override suspend fun saveMedicine(medicine: Medicine) {

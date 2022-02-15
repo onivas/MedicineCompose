@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.savinoordine.medicinecompose.domain.model.Medicine
+import com.savinoordine.medicinecompose.domain.model.NoMedicine
+import com.savinoordine.medicinecompose.domain.model.Pharma
 import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
 import com.savinoordine.medicinecompose.screen.core.ScreenState
 import com.savinoordine.medicinecompose.screen.core.State
@@ -31,7 +33,8 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
                 .collect { medicines ->
                     uiState = uiState.copy(
                         state = State.IDLE,
-                        medicines = if (medicines.isNullOrEmpty()) emptyList() else medicines
+                        medicines = if (medicines.isNullOrEmpty()) emptyList() else medicines,
+                        selectedMedicine = if (!medicines.isNullOrEmpty()) medicines[0] else NoMedicine()
                     )
                 }
         }
@@ -43,10 +46,15 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
             medicineRepository.deleteMedicine(medicine)
         }
     }
+
+    fun selectMedicine(medicine: Medicine) {
+        uiState = uiState.copy(state = State.IDLE, selectedMedicine = medicine)
+    }
 }
 
 data class MedicineListState(
     override val state: State = State.IDLE,
     val medicines: List<Medicine> = emptyList(),
+    val selectedMedicine: Pharma? = null,
     val error: String? = null,
 ) : ScreenState
