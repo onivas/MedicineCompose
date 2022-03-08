@@ -1,18 +1,15 @@
 package com.savinoordine.medicinecompose.screen.list
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.savinoordine.medicinecompose.domain.model.Medicine
 import com.savinoordine.medicinecompose.domain.model.NoMedicine
 import com.savinoordine.medicinecompose.domain.model.Pharma
 import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
-import com.savinoordine.medicinecompose.screen.core.ScreenState
-import com.savinoordine.medicinecompose.screen.core.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -23,38 +20,38 @@ class MedicineListViewModel
 @Inject
 constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
 
-    var uiState by mutableStateOf(value = MedicineListState(state = State.LOADING))
-        private set
+    private var _uiState = MutableStateFlow(MedicineListState(isLoading = true))
+    val uiState = _uiState.asStateFlow()
 
     fun fetchMedicines() {
         viewModelScope.launch(Dispatchers.IO) {
             medicineRepository.fetchMedicines()
                 .distinctUntilChanged()
                 .collect { medicines ->
-                    uiState = uiState.copy(
-                        state = State.IDLE,
+                    _uiState.value = _uiState.value.copy(
                         medicines = if (medicines.isNullOrEmpty()) emptyList() else medicines,
-                        selectedMedicine = if (!medicines.isNullOrEmpty()) medicines[0] else NoMedicine()
+                        selectedMedicine = NoMedicine()
                     )
                 }
         }
     }
 
+    // TODO: swipe view to delete
     fun deleteMedicine(medicine: Medicine) {
-        uiState = uiState.copy(state = State.LOADING)
+        _uiState.value = _uiState.value.copy(isLoading = true)
         viewModelScope.launch {
             medicineRepository.deleteMedicine(medicine)
         }
     }
 
     fun selectMedicine(medicine: Medicine) {
-        uiState = uiState.copy(state = State.IDLE, selectedMedicine = medicine)
+        _uiState.value = _uiState.value.copy(selectedMedicine = medicine)
     }
 }
 
 data class MedicineListState(
-    override val state: State = State.IDLE,
     val medicines: List<Medicine> = emptyList(),
-    val selectedMedicine: Pharma? = null,
+    val selectedMedicine: Pharma = NoMedicine(),
+    val isLoading: Boolean = false,
     val error: String? = null,
-) : ScreenState
+)

@@ -1,15 +1,12 @@
 package com.savinoordine.medicinecompose.screen.create
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.savinoordine.medicinecompose.domain.model.Medicine
 import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
-import com.savinoordine.medicinecompose.screen.core.ScreenState
-import com.savinoordine.medicinecompose.screen.core.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,27 +15,26 @@ class CreateMedicineViewModel
 @Inject
 constructor(var medicineRepository: MedicineRepository) : ViewModel() {
 
-    var uiState by mutableStateOf(value = NewMedicineState())
-        private set
+    private val _uiState = MutableStateFlow(value = NewMedicineState())
+    val uiState: StateFlow<NewMedicineState> = _uiState
 
     fun saveMedicine() {
-        if (uiState.medicine.isValid) {
-            uiState = uiState.copy(state = State.LOADING)
+        if (_uiState.value.medicine.isValid) {
             viewModelScope.launch {
-                medicineRepository.saveMedicine(uiState.medicine)
-                uiState = uiState.copy(state = State.SUCCESS)
+                medicineRepository.saveMedicine(_uiState.value.medicine)
+                _uiState.value = _uiState.value.copy(closeNewMedicineView = true)
             }
         }
     }
 
     fun onDescriptionChanged(value: String) {
-        val medicine = uiState.medicine.copy(shortDescription = value)
-        uiState = uiState.copy(medicine = medicine)
+        val medicine = _uiState.value.medicine.copy(shortDescription = value)
+       _uiState.value = _uiState.value.copy(medicine = medicine)
     }
 
     fun onNameChanged(value: String) {
-        val medicine = uiState.medicine.copy(name = value)
-        uiState = uiState.copy(
+        val medicine = _uiState.value.medicine.copy(name = value)
+        _uiState.value = _uiState.value.copy(
             medicine = medicine,
             isSaveButtonEnable = medicine.isValid
         )
@@ -46,9 +42,8 @@ constructor(var medicineRepository: MedicineRepository) : ViewModel() {
     }
 
     private fun canMedicineBeSaved() {
-        if (uiState.medicine.isValid) {
-            uiState = uiState.copy(
-                state = State.IDLE,
+        if (_uiState.value.medicine.isValid) {
+            _uiState.value = _uiState.value.copy(
                 isSaveButtonEnable = true
             )
         }
@@ -56,8 +51,8 @@ constructor(var medicineRepository: MedicineRepository) : ViewModel() {
 }
 
 data class NewMedicineState(
-    override val state: State = State.IDLE,
     val medicine: Medicine = Medicine(),
     val isSaveButtonEnable: Boolean = false,
+    val closeNewMedicineView: Boolean = false,
     val error: String? = null,
-) : ScreenState
+)

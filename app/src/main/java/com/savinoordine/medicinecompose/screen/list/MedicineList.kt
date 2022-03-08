@@ -25,6 +25,7 @@ import com.savinoordine.medicinecompose.route.NEW_MEDICINE_ROUTE
 import com.savinoordine.medicinecompose.screen.core.BottomBar
 import com.savinoordine.medicinecompose.screen.core.Loader
 import com.savinoordine.medicinecompose.screen.core.MedicineDetail
+import com.savinoordine.medicinecompose.screen.core.MedicineListCardView
 import com.savinoordine.medicinecompose.ui.theme.Black
 
 @ExperimentalMaterialApi
@@ -96,14 +97,7 @@ fun MedicineList(
             state = listState,
         ) {
             items(items = medicines) { medicine ->
-                Card(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-                    .padding(6.dp),
-                    elevation = 4.dp,
-                    onClick = { onMedicineSelected(medicine) }) {
-                    Text(modifier = Modifier.padding(4.dp), text = medicine.name)
-                }
+                MedicineListCardView(medicine = medicine, onMedicineSelected)
             }
         }
     }

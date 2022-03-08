@@ -1,5 +1,6 @@
 package com.savinoordine.medicinecompose.route
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -14,6 +15,7 @@ const val MAIN_ROUTE = "MAIN_ROUTE"
 const val LIST_MEDICINE_ROUTE = "LIST_MEDICINE_ROUTE"
 const val NEW_MEDICINE_ROUTE = "NEW_MEDICINE_ROUTE"
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation(startDestination = LIST_MEDICINE_ROUTE, route = MAIN_ROUTE) {

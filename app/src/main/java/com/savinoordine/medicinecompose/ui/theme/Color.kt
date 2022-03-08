@@ -2,7 +2,7 @@ package com.savinoordine.medicinecompose.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Black = Color(0xFF000000)
+val Green500 = Color(0xFF20AF48)
+val Green700 = Color(0xFF00E676)
+val Red700 = Color(0xFFFF5252)
