@@ -1,28 +1,31 @@
 package com.savinoordine.medicinecompose.screen.list
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.savinoordine.medicinecompose.R
 import com.savinoordine.medicinecompose.domain.model.Medicine
-import com.savinoordine.medicinecompose.domain.model.NoMedicine
-import com.savinoordine.medicinecompose.domain.model.Pharma
 import com.savinoordine.medicinecompose.route.NEW_MEDICINE_ROUTE
-import com.savinoordine.medicinecompose.screen.core.State
+import com.savinoordine.medicinecompose.screen.core.BottomBar
+import com.savinoordine.medicinecompose.screen.core.Loader
+import com.savinoordine.medicinecompose.screen.core.MedicineDetail
+import com.savinoordine.medicinecompose.ui.theme.Black
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
@@ -34,130 +37,86 @@ fun MedicineList(
 
     LaunchedEffect(Unit) { viewModel.fetchMedicines() }
 
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
-    )
+    Crossfade(targetState = viewModel.uiState.collectAsState()) { state ->
+        Loader(state.value.isLoading)
+        ListContent(
+            state.value.medicines,
+            { navController.navigate(NEW_MEDICINE_ROUTE) },
+        ) { medicine ->
+            viewModel.selectMedicine(medicine)
 
-    val uiState = viewModel.uiState
-
-    when (uiState.state) {
-        State.IDLE -> {
-            val medicines = uiState.medicines
-            val selectedMedicine = uiState.selectedMedicine
-
-            ShowMedicines(bottomSheetScaffoldState, medicines, selectedMedicine, {
-                navController.navigate(NEW_MEDICINE_ROUTE)
-            }, { medicine ->
-                viewModel.deleteMedicine(medicine)
-            }) { medicine ->
-                viewModel.selectMedicine(medicine)
-            }
         }
-        State.LOADING -> {
-            ShowLoading()
-        }
-        State.ERROR -> {
-            uiState.error?.let { ShowError(it) }
-        }
-        State.SUCCESS -> {}
+        MedicineDetail(state.value.selectedMedicine)
+        ErrorView(state.value.error)
     }
-}
-
-@Composable
-fun ShowError(error: String) {
-    ShowEmptyListPage(error)
-}
-
-@Composable
-fun ShowLoading() {
-    LinearProgressIndicator(
-        modifier = Modifier.height(3.dp),
-        backgroundColor = Color.Green,
-    )
 }
 
 @ExperimentalMaterialApi
-@ExperimentalFoundationApi
 @Composable
-fun ShowMedicines(
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
+fun ListContent(
     medicines: List<Medicine>,
-    selectedMedicine: Pharma?,
-    AddNewMedicineClick: () -> Unit,
-    OnMedicineDeletedClick: (Medicine) -> Unit,
-    OnMedicineClick: (Medicine) -> Unit
+    onNewMedicineClicked: () -> Unit,
+    onMedicineSelected: (Medicine) -> Unit,
 ) {
 
-    BottomSheetScaffold(
-        scaffoldState = bottomSheetScaffoldState,
-        sheetPeekHeight = 80.dp,
-        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = { BottomBar() },
         floatingActionButton = {
             FloatingActionButton(
-                content = { Text(text = "+") },
-                onClick = { AddNewMedicineClick() })
+                onClick = { onNewMedicineClicked() },
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary
+            ) {
+                Icon(painterResource(id = R.drawable.ic_add_24), "")
+            }
         },
+        isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
-        sheetContent = {
-            ShowMedicineDetail(selectedMedicine)
+    ) {
+        MedicineList(medicines = medicines, onMedicineSelected)
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun MedicineList(
+    medicines: List<Medicine>,
+    onMedicineSelected: (Medicine) -> Unit,
+) {
+    val listState = rememberLazyListState()
+
+    if (medicines.isEmpty()) {
+        Text(text = "No medicine yet")
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            state = listState,
+        ) {
+            items(items = medicines) { medicine ->
+                Card(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .padding(6.dp),
+                    elevation = 4.dp,
+                    onClick = { onMedicineSelected(medicine) }) {
+                    Text(modifier = Modifier.padding(4.dp), text = medicine.name)
+                }
+            }
         }
-    ) {
-        if (medicines.isEmpty()) {
-            ShowEmptyListPage("Click + to add medicine")
-        } else {
-            ShowMedicinesListPage(medicines, OnMedicineDeletedClick, OnMedicineClick)
-        }
     }
 }
 
 @Composable
-fun ShowMedicineDetail(selectedMedicine: Pharma?) {
-    when (selectedMedicine) {
-        is Medicine -> ShowMedicineBottomDetail(selectedMedicine)
-        else -> ShowNoMedicineBottomDetail(selectedMedicine as NoMedicine)
-    }
+fun ErrorView(error: String?) {
+    error?.let { EmptyLisView(it) }
 }
 
-@Composable
-fun ShowMedicineBottomDetail(medicine: Medicine) {
-    Row(
-        modifier = Modifier
-            .height(300.dp)
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            textAlign = TextAlign.Center,
-            color = Color.Magenta,
-            text = medicine.name
-        )
-    }
-}
 
 @Composable
-fun ShowNoMedicineBottomDetail(medicine: NoMedicine) {
-    Row(
-        modifier = Modifier
-            .height(300.dp)
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            textAlign = TextAlign.Center,
-            color = Color.Magenta,
-            text = medicine.name
-        )
-    }
-}
-
-@Composable
-fun ShowEmptyListPage(message: String) {
+fun EmptyLisView(message: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -169,69 +128,18 @@ fun ShowEmptyListPage(message: String) {
         Text(
             modifier = Modifier.wrapContentSize(),
             textAlign = TextAlign.Center,
-            color = Color.Magenta,
+            color = Black,
             text = message
         )
     }
 }
 
-@ExperimentalFoundationApi
-@Composable
-fun ShowMedicinesListPage(
-    medicines: List<Medicine>,
-    OnMedicineDeletedClick: (Medicine) -> Unit,
-    OnMedicineClick: (Medicine) -> Unit
-) {
-    val listState = rememberLazyListState()
-    LazyColumn(
-        state = listState,
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(8.dp),
-        contentPadding = PaddingValues(8.dp)
-    ) {
-        items(items = medicines) { medicine ->
-            MedicineItem(medicine, OnMedicineDeletedClick, OnMedicineClick)
-        }
-    }
-}
-
-@ExperimentalFoundationApi
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun MedicineItem(
-    medicine: Medicine,
-    OnMedicineDeletedClick: (Medicine) -> Unit,
-    OnMedicineClick: (Medicine) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .padding(5.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .combinedClickable(
-                onClick = {
-                    OnMedicineClick(medicine)
-                },
-                onLongClick = { OnMedicineDeletedClick(medicine) }
-            ),
-        elevation = 4.dp,
-    ) {
-        Column(
-            modifier = Modifier
-                .background(Color.Green)
-                .padding(4.dp),
-        ) {
-            Text(text = medicine.name)
-            Text(text = medicine.shortDescription)
-        }
-    }
-}
-
-@ExperimentalFoundationApi
-@Preview
+@ExperimentalMaterialApi
+@Preview(name = "Medicine Detail")
 @Composable
 fun PreviewList() {
-//    ShowMedicines(medicines = listOf(Medicine(1, "name", "description")), {}) {}
+    val medicine = Medicine(1, "name", "description")
+    ListContent(
+        listOf(medicine),
+        {}, { Medicine(1, "name", "description") })
 }
