@@ -15,9 +15,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
@@ -90,16 +93,36 @@ fun MedicineList(
     val listState = rememberLazyListState()
 
     if (medicines.isEmpty()) {
-        Text(text = "No medicine yet")
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "No medicine yet")
+        }
     } else {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
-            state = listState,
+                .padding(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            items(items = medicines) { medicine ->
-                MedicineListCardView(medicine = medicine, onMedicineSelected)
+            Text(
+                textAlign = TextAlign.Center,
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                text = "Medicines"
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                state = listState,
+            ) {
+                items(items = medicines) { medicine ->
+                    MedicineListCardView(medicine = medicine, onMedicineSelected)
+                }
             }
         }
     }
