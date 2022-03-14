@@ -3,8 +3,6 @@ package com.savinoordine.medicinecompose.screen.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.savinoordine.medicinecompose.domain.model.Medicine
-import com.savinoordine.medicinecompose.domain.model.NoMedicine
-import com.savinoordine.medicinecompose.domain.model.Pharma
 import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +28,7 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
                 .collect { medicines ->
                     _uiState.value = _uiState.value.copy(
                         medicines = if (medicines.isNullOrEmpty()) emptyList() else medicines,
-                        selectedMedicine = NoMedicine()
+                        selectedMedicine = null
                     )
                 }
         }
@@ -47,11 +45,15 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
     fun selectMedicine(medicine: Medicine) {
         _uiState.value = _uiState.value.copy(selectedMedicine = medicine)
     }
+
+    fun removeSelectedMedicine() {
+        _uiState.value = _uiState.value.copy(selectedMedicine = null)
+    }
 }
 
 data class MedicineListState(
     val medicines: List<Medicine> = emptyList(),
-    val selectedMedicine: Pharma = NoMedicine(),
+    val selectedMedicine: Medicine? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
 )

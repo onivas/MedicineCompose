@@ -18,6 +18,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.savinoordine.medicinecompose.R
 import com.savinoordine.medicinecompose.domain.model.Medicine
@@ -47,7 +49,7 @@ fun MedicineList(
             viewModel.selectMedicine(medicine)
 
         }
-        MedicineDetail(state.value.selectedMedicine)
+        MedicineDetail(state.value.selectedMedicine) { viewModel.removeSelectedMedicine() }
         ErrorView(state.value.error)
     }
 }

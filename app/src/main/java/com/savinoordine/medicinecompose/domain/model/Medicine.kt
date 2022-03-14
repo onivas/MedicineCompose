@@ -11,8 +11,3 @@ data class Medicine(
     val isValid: Boolean = name.trim().isNotEmpty()
 }
 
-data class NoMedicine(
-    val name: String = "No medicine selected"
-) : Pharma()
-
-
