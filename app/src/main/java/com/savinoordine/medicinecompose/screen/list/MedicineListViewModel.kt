@@ -34,7 +34,6 @@ constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
         }
     }
 
-    // TODO: swipe view to delete
     fun deleteMedicine(medicine: Medicine) {
         _uiState.value = _uiState.value.copy(isLoading = true)
         viewModelScope.launch {

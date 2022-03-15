@@ -48,6 +48,11 @@ constructor(var medicineRepository: MedicineRepository) : ViewModel() {
             )
         }
     }
+
+    fun onPriceChanged(value: String) {
+        val medicine = _uiState.value.medicine.copy(price = value)
+        _uiState.value = _uiState.value.copy(medicine = medicine)
+    }
 }
 
 data class NewMedicineState(

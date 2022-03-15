@@ -8,7 +8,8 @@ fun List<MedicineEntity>.toEntity(): List<Medicine> =
         Medicine(
             id = it.uid,
             name = it.name,
-            shortDescription = it.description.orEmpty()
+            shortDescription = it.description.orEmpty(),
+            price = it.price.orEmpty(),
         )
     }
 
@@ -18,5 +19,6 @@ fun Medicine.toEntity(): MedicineEntity {
         uid = id,
         name = name,
         description = shortDescription,
+        price = price,
     )
 }

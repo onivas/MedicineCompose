@@ -2,6 +2,7 @@ package com.savinoordine.medicinecompose.screen.create
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
@@ -11,6 +12,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,8 +32,10 @@ fun CreateMedicineScreen(
             isButtonEnable = state.value.isSaveButtonEnable,
             name = state.value.medicine.name,
             description = state.value.medicine.shortDescription,
+            price = state.value.medicine.price,
             onNameChanged = { viewModel.onNameChanged(it) },
             onDescriptionChanged = { viewModel.onDescriptionChanged(it) },
+            onPriceChanged = { viewModel.onPriceChanged(it) }
         ) {
             viewModel.saveMedicine()
         }
@@ -42,8 +48,10 @@ fun MedicineForm(
     isButtonEnable: Boolean,
     name: String,
     description: String,
+    price: String,
     onNameChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
+    onPriceChanged: (String) -> Unit,
     onSaveMedicineClick: () -> Unit
 ) {
     Scaffold(
@@ -69,6 +77,13 @@ fun MedicineForm(
                     hint = "Description",
                     onValueChanged = onDescriptionChanged
                 )
+
+                EditTextField(
+                    value = price,
+                    hint = "Price",
+                    textType = KeyboardType.Number,
+                    onValueChanged = onPriceChanged
+                )
             }
             Column() {
                 Button(modifier = Modifier
@@ -88,9 +103,15 @@ fun MedicineForm(
 fun EditTextField(
     value: String,
     hint: String,
+    textType: KeyboardType = KeyboardType.Text,
     onValueChanged: (String) -> Unit
 ) {
     OutlinedTextField(
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.None,
+            keyboardType = textType,
+            imeAction = ImeAction.Next
+        ),
         value = value,
         label = { Text(text = hint) },
         onValueChange = { onValueChanged(it) },
@@ -101,5 +122,5 @@ fun EditTextField(
 @Preview
 @Composable
 fun PreviewNewMedicine() {
-    MedicineForm(true, "", "", {}, {}) {}
+    MedicineForm(true, "", "", "1.0", {}, {}, {}) {}
 }

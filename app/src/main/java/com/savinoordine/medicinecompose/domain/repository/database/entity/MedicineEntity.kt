@@ -9,4 +9,5 @@ data class MedicineEntity(
     @PrimaryKey(autoGenerate = true) val uid: Int,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String?,
+    @ColumnInfo(name = "price") val price: String?,
 )
