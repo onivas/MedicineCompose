@@ -34,10 +34,7 @@ import androidx.navigation.NavController
 import com.savinoordine.medicinecompose.R
 import com.savinoordine.medicinecompose.domain.model.Medicine
 import com.savinoordine.medicinecompose.route.NEW_MEDICINE_ROUTE
-import com.savinoordine.medicinecompose.screen.core.BottomBar
-import com.savinoordine.medicinecompose.screen.core.Loader
-import com.savinoordine.medicinecompose.screen.core.MedicineDetail
-import com.savinoordine.medicinecompose.screen.core.MedicineListCardView
+import com.savinoordine.medicinecompose.screen.core.*
 import com.savinoordine.medicinecompose.ui.theme.Black
 
 @ExperimentalMaterialApi
@@ -73,6 +70,7 @@ fun ListContent(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = { TopBar(onBackToListClicked = null) },
         bottomBar = { BottomBar() },
         floatingActionButton = {
             FloatingActionButton(

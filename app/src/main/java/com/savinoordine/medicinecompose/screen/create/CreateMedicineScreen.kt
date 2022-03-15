@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.savinoordine.medicinecompose.screen.core.TopBar
 
 @Composable
 fun CreateMedicineScreen(
@@ -45,7 +46,9 @@ fun MedicineForm(
     onDescriptionChanged: (String) -> Unit,
     onSaveMedicineClick: () -> Unit
 ) {
-    Scaffold {
+    Scaffold(
+        topBar = { TopBar(title = "Add new medicine", onBackToListClicked = null) },
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
