@@ -22,7 +22,7 @@ fun MedicineListCardView(
     Card(modifier = Modifier
         .fillMaxWidth()
         .heightIn(min = 72.dp, max = 80.dp)
-        .padding(8.dp),
+        .padding(start=8.dp, top = 8.dp, bottom = 8.dp, end = 10.dp),
         backgroundColor = Green500,
         elevation = 4.dp,
         shape = CutCornerShape(bottomStartPercent = 15, topEndPercent = 30),

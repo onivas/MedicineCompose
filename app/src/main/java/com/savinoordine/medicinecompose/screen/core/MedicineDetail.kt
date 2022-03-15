@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.savinoordine.medicinecompose.R
 import com.savinoordine.medicinecompose.domain.model.Medicine
 import com.savinoordine.medicinecompose.ui.theme.Black
@@ -45,31 +46,48 @@ fun MedicineDetail(
                     }
                 }
             },
-            isFloatingActionButtonDocked = true,
         ) {
-            MedicineBottomDetail(selectedMedicine)
+            MedicineBottomDetail(selectedMedicine, onBackToListClicked)
         }
     }
 }
 
 @Composable
-fun MedicineBottomDetail(medicine: Medicine) {
-    Row(
+fun MedicineBottomDetail(
+    medicine: Medicine,
+    onBackToListClicked: () -> Unit,
+) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Red700)
             .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             modifier = Modifier.wrapContentSize(),
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
+            fontSize = 20.sp,
             color = Black,
             text = medicine.name.replaceFirstChar { it.uppercase() }
         )
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            onClick = { onBackToListClicked() }) {
+            Row {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_back_24),
+                    contentDescription = ""
+                )
+                Text(text = "Back to list")
+            }
+
+        }
     }
 }
 
@@ -77,5 +95,5 @@ fun MedicineBottomDetail(medicine: Medicine) {
 @Preview
 @Composable
 fun PreviewMedicineItem() {
-    MedicineBottomDetail(medicine = Medicine(1, "aspiricchia", "description"))
+    MedicineBottomDetail(medicine = Medicine(1, "aspiricchia", "description"), {})
 }
