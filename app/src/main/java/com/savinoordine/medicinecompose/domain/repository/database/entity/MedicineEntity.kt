@@ -10,4 +10,6 @@ data class MedicineEntity(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String?,
     @ColumnInfo(name = "price") val price: String?,
+    @ColumnInfo(name = "isAtHome") val isAtHome: Boolean,
+    @ColumnInfo(name = "expireDate") val expireDate: String?,
 )

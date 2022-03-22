@@ -10,6 +10,8 @@ fun List<MedicineEntity>.toEntity(): List<Medicine> =
             name = it.name,
             shortDescription = it.description.orEmpty(),
             price = it.price.orEmpty(),
+            isAtHome = it.isAtHome,
+            expirationDate = it.expireDate
         )
     }
 
@@ -20,5 +22,7 @@ fun Medicine.toEntity(): MedicineEntity {
         name = name,
         description = shortDescription,
         price = price,
+        isAtHome = isAtHome,
+        expireDate = expirationDate
     )
 }

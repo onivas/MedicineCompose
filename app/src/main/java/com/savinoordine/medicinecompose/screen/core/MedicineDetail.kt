@@ -58,10 +58,14 @@ fun MedicineBottomDetail(
             color = Black,
             text = medicine.name.replaceFirstChar { it.uppercase() }
         )
+        Text(text = medicine.shortDescription)
+        Text(text = medicine.price)
+        Text(text = medicine.isAtHome.toString())
+        Text(text = medicine.expirationDate.orEmpty())
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .height(60.dp),
             onClick = { onBackToListClicked() }) {
             Row {
                 Icon(
