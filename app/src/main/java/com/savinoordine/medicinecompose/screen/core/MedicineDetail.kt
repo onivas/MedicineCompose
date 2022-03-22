@@ -2,10 +2,7 @@ package com.savinoordine.medicinecompose.screen.core
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,23 +42,51 @@ fun MedicineBottomDetail(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(8.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            fontStyle = FontStyle.Normal,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp,
-            color = Black,
-            text = medicine.name.replaceFirstChar { it.uppercase() }
-        )
-        Text(text = medicine.shortDescription)
-        Text(text = medicine.price)
-        Text(text = medicine.isAtHome.toString())
-        Text(text = medicine.expirationDate.orEmpty())
+        Column() {
+            Text(
+                modifier = Modifier.wrapContentSize(),
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                color = Black,
+                text = medicine.name.replaceFirstChar { it.uppercase() }
+            )
+            Row(modifier = Modifier.padding(8.dp)) {
+                Text(
+                    fontWeight = FontWeight.Bold,
+                    text = "How to use: "
+                )
+                Text(text = medicine.shortDescription)
+            }
+
+            Row(modifier = Modifier.padding(8.dp)) {
+                Text(
+                    fontWeight = FontWeight.Bold,
+                    text = "Price: "
+                )
+                Text(text = medicine.price)
+            }
+
+            Row(modifier = Modifier.padding(8.dp)) {
+                Text(
+                    fontWeight = FontWeight.Bold,
+                    text = "Is medicine at home? "
+                )
+                Text(text = if (medicine.isAtHome) "YES" else "NO")
+            }
+
+            Row(modifier = Modifier.padding(8.dp)) {
+                Text(
+                    fontWeight = FontWeight.Bold,
+                    text = "Use before "
+                )
+                Text(text = ": ${medicine.expirationDate.orEmpty()}")
+            }
+        }
         Button(
             modifier = Modifier
                 .fillMaxWidth()
