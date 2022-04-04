@@ -1,4 +1,4 @@
-package com.savinoordine.medicinecompose.screen.core
+package com.savinoordine.medicinecompose.screen.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.savinoordine.medicinecompose.R
 import com.savinoordine.medicinecompose.domain.model.Medicine
+import com.savinoordine.medicinecompose.screen.core.TopBar
 import com.savinoordine.medicinecompose.ui.theme.Black
 
 @Composable
@@ -92,7 +93,9 @@ fun MedicineBottomDetail(
                 .fillMaxWidth()
                 .height(60.dp),
             onClick = { onBackToListClicked() }) {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_back_24),
                     contentDescription = ""
