@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.savinoordine.medicinecompose.domain.model.Medicine
 import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
+import com.savinoordine.medicinecompose.shared.FilterPreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MedicineListViewModel
 @Inject
-constructor(private val medicineRepository: MedicineRepository) : ViewModel() {
+constructor(
+    private val medicineRepository: MedicineRepository,
+    private val filterPreference: FilterPreference
+) : ViewModel() {
 
     private var _uiState = MutableStateFlow(MedicineListState(isLoading = true))
     val uiState = _uiState.asStateFlow()

@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.savinoordine.medicinecompose.screen.list.MedicineList
 import com.savinoordine.medicinecompose.screen.create.CreateMedicineScreen
-import com.savinoordine.medicinecompose.screen.filter.FilterView
+import com.savinoordine.medicinecompose.screen.filter.FilterScreen
 
 // routes
 const val MAIN_ROUTE = "MAIN_ROUTE"
@@ -34,7 +34,10 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             )
         }
         composable(route = FILTER_MEDICINE_ROUTE) {
-            FilterView({}, {})
+            FilterScreen(
+                navController = navController,
+                viewModel = hiltViewModel(),
+            )
         }
     }
 }

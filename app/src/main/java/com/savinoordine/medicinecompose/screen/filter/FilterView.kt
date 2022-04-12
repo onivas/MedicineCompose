@@ -1,14 +1,14 @@
 package com.savinoordine.medicinecompose.screen.filter
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.savinoordine.medicinecompose.screen.core.TopBar
 import com.savinoordine.medicinecompose.ui.theme.Green10Alpha
 import kotlin.math.roundToInt
@@ -17,13 +17,31 @@ const val MIN_PRICE = 0F
 const val MAX_PRICE = 100F
 
 @Composable
+fun FilterScreen(
+    navController: NavController,
+    viewModel: FilterViewModel,
+) {
+    Crossfade(targetState = viewModel.state.collectAsState()) { state ->
+        if (state.value.closeView) LaunchedEffect(Unit) { navController.popBackStack() }
+        FilterView({ navController.popBackStack() },
+            { viewModel.isAtHomeClicked(it) },
+            { viewModel.isExpiredClicked(it) },
+            { start, end -> viewModel.priceSliderChanged(start, end) })
+        { viewModel.onFilterApplied() }
+    }
+}
+
+@Composable
 fun FilterView(
     onBackToListClicked: () -> Unit,
-    onFilterApplied: () -> Unit,
+    onIsAtHomeClicked: (Boolean) -> Unit,
+    onIsExpiredClicked: (Boolean) -> Unit,
+    onPriceChanged: (Float, Float) -> Unit,
+    onFilterApplyClick: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { TopBar(onBackToListClicked = onBackToListClicked) },
+        topBar = { TopBar(onBackToListClicked = { onBackToListClicked() }) },
     ) {
         Column(
             modifier = Modifier
@@ -34,14 +52,10 @@ fun FilterView(
 
             ) {
             Column() {
-                IsAtHomeFilterView {
-
-                }
-                ExpireFilterView {
-
-                }
+                IsAtHomeFilterView { onIsAtHomeClicked(it) }
+                ExpireFilterView { onIsExpiredClicked(it) }
                 PriceSliderFilterView { start, end ->
-
+                    onPriceChanged(start, end)
                 }
             }
 
@@ -50,7 +64,7 @@ fun FilterView(
                     .fillMaxWidth()
                     .height(60.dp)
                     .padding(8.dp),
-                onClick = { onFilterApplied() }) {
+                onClick = { onFilterApplyClick() }) {
                 Text(text = "Apply")
             }
         }
@@ -145,5 +159,5 @@ fun ExpireFilterView(onExpiredChecked: (Boolean) -> Unit) {
 @Preview
 @Composable
 fun PreviewFilter() {
-    FilterView({}, {})
+    FilterView({}, {}, {}, { _, _ -> }, {})
 }

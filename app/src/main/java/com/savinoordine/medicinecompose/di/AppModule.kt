@@ -6,11 +6,13 @@ import com.savinoordine.medicinecompose.domain.repository.MedicineClient
 import com.savinoordine.medicinecompose.domain.repository.MedicineRepository
 import com.savinoordine.medicinecompose.domain.repository.database.AppDatabase
 import com.savinoordine.medicinecompose.domain.repository.database.dao.MedicineDao
+import com.savinoordine.medicinecompose.shared.FilterPreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -34,4 +36,8 @@ object AppModule {
     fun provideMedicineRepository(medicineDao: MedicineDao): MedicineRepository {
         return MedicineClient(medicineDao)
     }
+
+    @Provides
+    @Singleton
+    fun provideFilterPreferences() : FilterPreference = FilterPreference()
 }
