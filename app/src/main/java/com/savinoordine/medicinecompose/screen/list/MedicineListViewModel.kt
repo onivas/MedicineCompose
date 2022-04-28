@@ -19,7 +19,7 @@ class MedicineListViewModel
 @Inject
 constructor(
     private val medicineRepository: MedicineRepository,
-    private val filterPreference: FilterPreference
+    private val filterPreference: FilterPreference,
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(MedicineListState(isLoading = true))

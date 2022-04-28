@@ -1,14 +1,22 @@
 package com.savinoordine.medicinecompose.screen.filter
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.savinoordine.medicinecompose.R
 import com.savinoordine.medicinecompose.screen.core.TopBar
 import com.savinoordine.medicinecompose.ui.theme.Green10Alpha
 import kotlin.math.roundToInt
@@ -23,11 +31,18 @@ fun FilterScreen(
 ) {
     Crossfade(targetState = viewModel.state.collectAsState()) { state ->
         if (state.value.closeView) LaunchedEffect(Unit) { navController.popBackStack() }
-        FilterView({ navController.popBackStack() },
-            { viewModel.isAtHomeClicked(it) },
-            { viewModel.isExpiredClicked(it) },
-            { start, end -> viewModel.priceSliderChanged(start, end) })
-        { viewModel.onFilterApplied() }
+        FilterView(
+            onBackToListClicked = { navController.popBackStack() },
+            onIsAtHomeClicked = { viewModel.isAtHomeClicked(it) },
+            onIsExpiredClicked = { viewModel.isExpiredClicked(it) },
+            onPriceChanged = { start, end -> viewModel.priceSliderChanged(start, end) },
+            onFilterApplyClick = { viewModel.onFilterApplied() },
+            onFilterCleanClick = { viewModel.onFilterCleaned() },
+            isMedicineAtHome = state.value.filterPreference.isMedicineAtHome,
+            isMedicineExpired = state.value.filterPreference.isMedicineExpired,
+            minPrice = state.value.filterPreference.minPrice,
+            maxPrice = state.value.filterPreference.maxPrice
+        )
     }
 }
 
@@ -37,7 +52,12 @@ fun FilterView(
     onIsAtHomeClicked: (Boolean) -> Unit,
     onIsExpiredClicked: (Boolean) -> Unit,
     onPriceChanged: (Float, Float) -> Unit,
-    onFilterApplyClick: () -> Unit
+    onFilterApplyClick: () -> Unit,
+    onFilterCleanClick: () -> Unit,
+    isMedicineAtHome: Boolean,
+    isMedicineExpired: Boolean,
+    minPrice: Int,
+    maxPrice: Int
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -52,20 +72,40 @@ fun FilterView(
 
             ) {
             Column() {
-                IsAtHomeFilterView { onIsAtHomeClicked(it) }
-                ExpireFilterView { onIsExpiredClicked(it) }
-                PriceSliderFilterView { start, end ->
+                IsAtHomeFilterView(isMedicineAtHome) { onIsAtHomeClicked(it) }
+                ExpireFilterView(isMedicineExpired) { onIsExpiredClicked(it) }
+                PriceSliderFilterView(minPrice, maxPrice) { start, end ->
                     onPriceChanged(start, end)
                 }
             }
 
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp)
-                    .padding(8.dp),
-                onClick = { onFilterApplyClick() }) {
-                Text(text = "Apply")
+            Column() {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Red,
+                        contentColor = Color.White
+                    ),
+                    onClick = { onFilterCleanClick() }) {
+                    Row() {
+                        Text(text = "Clean filter")
+                    }
+
+                }
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .padding(8.dp),
+                    onClick = { onFilterApplyClick() }) {
+                    Row() {
+                        Text(text = "Apply")
+                    }
+                }
             }
         }
     }
@@ -73,8 +113,12 @@ fun FilterView(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PriceSliderFilterView(onPriceSelected: (Float, Float) -> Unit) {
-    val sliderPosition = remember { mutableStateOf(MIN_PRICE..MAX_PRICE) }
+fun PriceSliderFilterView(
+    minPrice: Int,
+    maxPrice: Int,
+    onPriceSelected: (Float, Float) -> Unit
+) {
+    val sliderPosition = remember { mutableStateOf(minPrice.toFloat()..maxPrice.toFloat()) }
 
     Card(
         modifier = Modifier
@@ -112,8 +156,8 @@ fun PriceSliderFilterView(onPriceSelected: (Float, Float) -> Unit) {
 }
 
 @Composable
-fun IsAtHomeFilterView(onAtHomeChecked: (Boolean) -> Unit) {
-    val checkedState = remember { mutableStateOf(false) }
+fun IsAtHomeFilterView(isMedicineAtHome: Boolean, onAtHomeChecked: (Boolean) -> Unit) {
+    val checkedState = remember { mutableStateOf(isMedicineAtHome) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,8 +178,8 @@ fun IsAtHomeFilterView(onAtHomeChecked: (Boolean) -> Unit) {
 }
 
 @Composable
-fun ExpireFilterView(onExpiredChecked: (Boolean) -> Unit) {
-    val checkedState = remember { mutableStateOf(false) }
+fun ExpireFilterView(isMedicineExpired: Boolean, onExpiredChecked: (Boolean) -> Unit) {
+    val checkedState = remember { mutableStateOf(isMedicineExpired) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -159,5 +203,16 @@ fun ExpireFilterView(onExpiredChecked: (Boolean) -> Unit) {
 @Preview
 @Composable
 fun PreviewFilter() {
-    FilterView({}, {}, {}, { _, _ -> }, {})
+    FilterView(
+        {},
+        {},
+        {},
+        { _, _ -> },
+        {},
+        {},
+        false,
+        false,
+        0,
+        20
+    )
 }
